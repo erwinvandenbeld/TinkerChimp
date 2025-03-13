@@ -52,7 +52,7 @@ def read_arguments() -> dict[str, str]:
                         help='The IOT core topic to listen to.')
     parser.add_argument('--endpoint', type=str, required=True,
                         help='The IOT core endpoint to connect to.')
-    parser.add_argument('--no-gpio', action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument('--no-gpio', action=argparse.BooleanOptionalAction)
 
     return parser.parse_args()
 
@@ -63,7 +63,8 @@ if __name__ == '__main__':
     print("\nStarting MQTT5 PubSub Sample\n")
     arguments = read_arguments()
     message_topic = arguments.topic
-    shaker = Shaker(not arguments.no_gpio)
+    shaker = Shaker(arguments.no_gpio == None)
+
 
     client = mqtt5_client_builder.mtls_from_path(
         endpoint=arguments.endpoint,
