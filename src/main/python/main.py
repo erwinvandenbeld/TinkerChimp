@@ -7,7 +7,7 @@ import threading
 from concurrent.futures import Future
 from shaker import Shaker
 
-TIMEOUT = 5
+TIMEOUT = 20
 topic_filter = "chimp/topic"
 received_count = 0
 received_all_event = threading.Event()
