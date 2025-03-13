@@ -19,8 +19,7 @@ def on_publish_received(publish_packet_data):
     publish_packet = publish_packet_data.publish_packet
     print("Received message from topic'{}':{}".format(publish_packet.topic, publish_packet.payload))
 
-    for i in range(4):
-        led.blink()
+    led.blink(on_time=0.5, off_time=0.2, n=5, background=True)
 
     global received_count
     received_count += 1
