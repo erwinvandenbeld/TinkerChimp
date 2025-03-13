@@ -1,4 +1,5 @@
 import argparse
+from time import sleep
 
 from awsiot import mqtt5_client_builder
 from awscrt import mqtt5, http
@@ -17,7 +18,10 @@ future_connection_success = Future()
 def on_publish_received(publish_packet_data):
     publish_packet = publish_packet_data.publish_packet
     print("Received message from topic'{}':{}".format(publish_packet.topic, publish_packet.payload))
-    led.on()
+
+    for i in range(4):
+        led.blink()
+
     global received_count
     received_count += 1
     # FIXME Deceide when to stop
