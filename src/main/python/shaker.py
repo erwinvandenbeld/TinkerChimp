@@ -1,6 +1,8 @@
 from gpiozero import LED
 
 class Shaker:
+    led = None
+    
     def __init__(self, gpio_available: bool):
         if gpio_available:
             self.led = LED(17)
