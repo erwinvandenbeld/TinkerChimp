@@ -4,6 +4,7 @@ from awsiot import mqtt5_client_builder
 from awscrt import mqtt5, http
 import threading
 from concurrent.futures import Future
+from gpiozero import LED
 
 TIMEOUT = 100
 topic_filter = "chimp/topic"
@@ -16,6 +17,7 @@ future_connection_success = Future()
 def on_publish_received(publish_packet_data):
     publish_packet = publish_packet_data.publish_packet
     print("Received message from topic'{}':{}".format(publish_packet.topic, publish_packet.payload))
+    led.on()
     global received_count
     received_count += 1
     # FIXME Deceide when to stop
@@ -51,6 +53,8 @@ def read_arguments() -> dict[str, str]:
 
 
 if __name__ == '__main__':
+    led = LED(17)
+
     print("\nStarting MQTT5 PubSub Sample\n")
     arguments = read_arguments()
     message_topic = arguments.topic
