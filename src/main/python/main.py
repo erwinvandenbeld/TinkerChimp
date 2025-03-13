@@ -7,7 +7,7 @@ import threading
 from concurrent.futures import Future
 from shaker import Shaker
 
-TIMEOUT = 100
+TIMEOUT = 5
 topic_filter = "chimp/topic"
 received_count = 0
 received_all_event = threading.Event()
@@ -24,10 +24,6 @@ def on_publish_received(publish_packet_data):
 
     global received_count
     received_count += 1
-    # FIXME Deceide when to stop
-    if received_count == 4:
-        received_all_event.set()
-
 
 def on_lifecycle_stopped(lifecycle_stopped_data: mqtt5.LifecycleStoppedData):
     print("Lifecycle Stopped")
@@ -95,7 +91,7 @@ if __name__ == '__main__':
     suback = subscribe_future.result(TIMEOUT)
     print("Subscribed with {}".format(suback.reason_codes))
 
-    received_all_event.wait(TIMEOUT)
+    received_all_event.wait()
     print("{} message(s) received.".format(received_count))
 
     # Unsubscribe
