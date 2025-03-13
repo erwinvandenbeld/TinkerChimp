@@ -5,7 +5,7 @@ from awsiot import mqtt5_client_builder
 from awscrt import mqtt5, http
 import threading
 from concurrent.futures import Future
-from gpiozero import LED
+from shaker import Shaker
 
 TIMEOUT = 100
 topic_filter = "chimp/topic"
@@ -13,13 +13,14 @@ received_count = 0
 received_all_event = threading.Event()
 future_stopped = Future()
 future_connection_success = Future()
+shaker = None
 
 
 def on_publish_received(publish_packet_data):
     publish_packet = publish_packet_data.publish_packet
     print("Received message from topic'{}':{}".format(publish_packet.topic, publish_packet.payload))
 
-    led.blink(on_time=0.5, off_time=0.2, n=5, background=True)
+    shaker.shake()
 
     global received_count
     received_count += 1
@@ -51,16 +52,18 @@ def read_arguments() -> dict[str, str]:
                         help='The IOT core topic to listen to.')
     parser.add_argument('--endpoint', type=str, required=True,
                         help='The IOT core endpoint to connect to.')
+    parser.add_argument('--no-gpio', action=argparse.BooleanOptionalAction, default=True)
 
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    led = LED(17)
+
 
     print("\nStarting MQTT5 PubSub Sample\n")
     arguments = read_arguments()
     message_topic = arguments.topic
+    shaker = Shaker(not arguments.no_gpio)
 
     client = mqtt5_client_builder.mtls_from_path(
         endpoint=arguments.endpoint,
